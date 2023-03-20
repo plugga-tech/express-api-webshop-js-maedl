@@ -14,7 +14,8 @@ router.post('/', function(req, res, next) {
 
 // SKAPA USER
 router.post('/add', function(req, res) {
-  res.send('add')
+  let response = req.body;
+  res.json(response);
 })
 
 router.post('/login', function(req, res) {
