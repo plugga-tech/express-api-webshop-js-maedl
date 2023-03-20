@@ -2,12 +2,20 @@ const express = require('express');
 const router = express.Router();
 
 // HÄMTA ALLA USERS // SKICKA INTE MED LÖSENORD // BARA ID, NAMN + EMAIL PÅ ALLA USERS
-router.get('/', function(req, res, next) {
+router.get('/', function(req, res) {
 
   req.app.locals.db.collection('users').find().toArray()
   .then(results => {
-    console.log(results);
-    res.send(results);
+    let users = [];
+
+    for (let i = 0; i < results.length; i++) {
+      console.log('before delete', results[i]);
+      delete results[i].password;
+      console.log(results[i]);
+      users.push(results[i]);
+    }
+
+    res.send(users);
   })
 
 });
@@ -23,8 +31,8 @@ router.post('/add', function(req, res) {
 
   req.app.locals.db.collection('users').insertOne(req.body)
   .then(result => {
-    console.log(result);
-    res.redirect('/');
+    console.log(result.insertedId);
+    res.json(result);
   })
 })
 
