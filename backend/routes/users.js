@@ -1,3 +1,4 @@
+const { ObjectId } = require('bson');
 const express = require('express');
 const router = express.Router();
 
@@ -22,8 +23,18 @@ router.get('/', function(req, res) {
 
 // HÄMTA SPECIFIK USER // SKICKA HELA OBJEKTET
 router.post('/', function(req, res, next) {
-  let response = req.body;
-  res.json(response);
+
+  let id = req.body.id;
+  let objectId = new ObjectId(id);
+
+  console.log(objectId);
+
+  req.app.locals.db.collection('users').findOne({_id: objectId})
+  .then(result => {
+    console.log(result);
+    res.json(result);
+  })
+
 });
 
 // SKAPA USER
