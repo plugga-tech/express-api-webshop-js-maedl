@@ -22,7 +22,7 @@ router.get('/', function(req, res) {
 });
 
 // HÄMTA SPECIFIK USER // SKICKA HELA OBJEKTET
-router.post('/', function(req, res, next) {
+router.post('/', function(req, res) {
 
   let id = req.body.id;
   let objectId = new ObjectId(id);
@@ -47,6 +47,7 @@ router.post('/add', function(req, res) {
   })
 })
 
+// LOGGA IN USER
 router.post('/login', function(req, res) {
 
   const user = {
@@ -68,9 +69,6 @@ router.post('/login', function(req, res) {
         answer.loggedIn = true;
         answer.user = user;
         answer.id = users[i]._id;
-      }
-      else {
-        console.log('not found');
       }
     }
 
