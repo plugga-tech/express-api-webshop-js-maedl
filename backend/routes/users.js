@@ -16,8 +16,7 @@ router.get('/', function(req, res) {
       users.push(results[i]);
     }
 
-    console.log(users);
-    res.send(users);
+    res.json(users);
   })
 
 });
@@ -29,11 +28,8 @@ router.post('/', function(req, res) {
   let id = req.body.id;
   let objectId = new ObjectId(id);
 
-  console.log(objectId);
-
   usersCollection.findOne({_id: objectId})
   .then(result => {
-    console.log(result);
     res.json(result);
   })
 
@@ -42,12 +38,18 @@ router.post('/', function(req, res) {
 // SKAPA USER
 router.post('/add', function(req, res) {
 
+  let answer = {
+   success: false,
+
+  }
+
   const usersCollection = req.app.locals.db.collection('users');
 
   usersCollection.insertOne(req.body)
   .then(result => {
-    console.log(result.insertedId);
-    res.json(result);
+    answer.success = true;
+    answer.id = result.insertedId;
+    res.json(answer);
   })
 })
 
@@ -71,7 +73,6 @@ router.post('/login', function(req, res) {
   .then(users => {
     for (let i = 0; i < users.length; i++) {
       if (user.username === users[i].username && user.pw === users[i].password) {
-        console.log('found');
         answer.loggedIn = true;
         answer.user = user;
         answer.id = users[i]._id;
