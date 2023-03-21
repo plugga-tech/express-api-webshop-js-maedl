@@ -5,6 +5,11 @@ const router = express.Router();
 // SKAPA ORDER FÖR EN SPECIFIK USER // PRODUCTS ÄR EN ARRAY MOTSVARANDE INNEHÅLLET I KUNDVAGN
 router.post('/add', function(req, res) {
 
+  let answer = {
+    success: false
+  }
+
+  ordersCollection = req.app.locals.db.collection('orders');
   const productsCollection = req.app.locals.db.collection('products');
   const orderedProducts = req.body.products;
 
@@ -24,7 +29,13 @@ router.post('/add', function(req, res) {
 
   });
 
-  res.send('answer');
+  ordersCollection.insertOne(req.body)
+  .then(result => {
+    answer.success = true;
+    answer.id = result.insertedId;
+    res.json(answer);
+  })
+
 });
 
 // HÄMTA ALLA ORDERS
