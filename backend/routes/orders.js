@@ -3,7 +3,10 @@ const router = express.Router();
 
 // SKAPA ORDER FÖR EN SPECIFIK USER // PRODUCTS ÄR EN ARRAY MOTSVARANDE INNEHÅLLET I KUNDVAGN
 router.post('/add', function(req, res) {
-  res.send('orders');
+  req.app.locals.db.collection('orders').insertOne(req.body)
+  .then(result => {
+    res.json(result);
+  })
 });
 
 // HÄMTA ALLA ORDERS
