@@ -2,16 +2,17 @@ const { ObjectId } = require('bson');
 const express = require('express');
 const router = express.Router();
 
+// HÄMTA ALLA PRODUKTER
 router.get('/', function(req, res) {
 
   req.app.locals.db.collection('products').find().toArray()
   .then(results => {
-    console.log(results);
     res.json(results);
   });
 
 });
 
+// HÄMTA SPECIFIK PRODUKT
 router.get('/:id', function(req, res) {
 
   let id = req.params.id;
@@ -23,6 +24,15 @@ router.get('/:id', function(req, res) {
     res.json(product);
   });
 
+})
+
+// SKAPA PRODUKT
+router.post('/add', function(req, res) {
+
+  req.app.locals.db.collection('products').insertOne(req.body)
+  .then(result => {
+    res.json(result);
+  })
 })
 
 module.exports = router;
