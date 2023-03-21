@@ -5,17 +5,18 @@ const router = express.Router();
 // HÄMTA ALLA USERS // SKICKA INTE MED LÖSENORD // BARA ID, NAMN + EMAIL PÅ ALLA USERS
 router.get('/', function(req, res) {
 
-  req.app.locals.db.collection('users').find().toArray()
+  const usersCollection = req.app.locals.db.collection('users');
+
+  usersCollection.find().toArray()
   .then(results => {
     let users = [];
 
     for (let i = 0; i < results.length; i++) {
-      console.log('before delete', results[i]);
       delete results[i].password;
-      console.log(results[i]);
       users.push(results[i]);
     }
 
+    console.log(users);
     res.send(users);
   })
 
@@ -24,12 +25,13 @@ router.get('/', function(req, res) {
 // HÄMTA SPECIFIK USER // SKICKA HELA OBJEKTET
 router.post('/', function(req, res) {
 
+  const usersCollection = req.app.locals.db.collection('users');
   let id = req.body.id;
   let objectId = new ObjectId(id);
 
   console.log(objectId);
 
-  req.app.locals.db.collection('users').findOne({_id: objectId})
+  usersCollection.findOne({_id: objectId})
   .then(result => {
     console.log(result);
     res.json(result);
@@ -40,7 +42,9 @@ router.post('/', function(req, res) {
 // SKAPA USER
 router.post('/add', function(req, res) {
 
-  req.app.locals.db.collection('users').insertOne(req.body)
+  const usersCollection = req.app.locals.db.collection('users');
+
+  usersCollection.insertOne(req.body)
   .then(result => {
     console.log(result.insertedId);
     res.json(result);
@@ -49,6 +53,8 @@ router.post('/add', function(req, res) {
 
 // LOGGA IN USER
 router.post('/login', function(req, res) {
+
+  const usersCollection = req.app.locals.db.collection('users');
 
   const user = {
     user: req.body.username,
@@ -61,7 +67,7 @@ router.post('/login', function(req, res) {
     id: ''
   }
 
-  req.app.locals.db.collection('users').find().toArray()
+  usersCollection.find().toArray()
   .then(users => {
     for (let i = 0; i < users.length; i++) {
       if (user.username === users[i].username && user.pw === users[i].password) {

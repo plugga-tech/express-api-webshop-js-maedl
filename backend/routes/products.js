@@ -5,7 +5,9 @@ const router = express.Router();
 // HÄMTA ALLA PRODUKTER
 router.get('/', function(req, res) {
 
-  req.app.locals.db.collection('products').find().toArray()
+  const productsCollection = req.app.locals.db.collection('products');
+
+  productsCollection.find().toArray()
   .then(results => {
     res.json(results);
   });
@@ -15,10 +17,11 @@ router.get('/', function(req, res) {
 // HÄMTA SPECIFIK PRODUKT
 router.get('/:id', function(req, res) {
 
+  const productsCollection = req.app.locals.db.collection('products');
   let id = req.params.id;
   let productId = new ObjectId(id);
 
-  req.app.locals.db.collection('products').findOne({_id: productId})
+  productsCollection.findOne({_id: productId})
   .then(product => {
     console.log(product);
     res.json(product);
@@ -29,7 +32,9 @@ router.get('/:id', function(req, res) {
 // SKAPA PRODUKT
 router.post('/add', function(req, res) {
 
-  req.app.locals.db.collection('products').insertOne(req.body)
+  const productsCollection = req.app.locals.db.collection('products');
+
+  productsCollection.insertOne(req.body)
   .then(result => {
     res.json(result);
   })
