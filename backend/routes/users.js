@@ -48,8 +48,35 @@ router.post('/add', function(req, res) {
 })
 
 router.post('/login', function(req, res) {
-  let response = req.body;
-  res.json(response);
+
+  const user = {
+    user: req.body.username,
+    pw: req.body.password
+  }
+
+  let answer = {
+    loggedIn: false,
+    user: '',
+    id: ''
+  }
+
+  req.app.locals.db.collection('users').find().toArray()
+  .then(users => {
+    for (let i = 0; i < users.length; i++) {
+      if (user.username === users[i].username && user.pw === users[i].password) {
+        console.log('found');
+        answer.loggedIn = true;
+        answer.user = user;
+        answer.id = users[i]._id;
+      }
+      else {
+        console.log('not found');
+      }
+    }
+
+    res.json(answer);
+  })
+  
 })
 
 module.exports = router;
