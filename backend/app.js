@@ -3,6 +3,7 @@ const cors = require('cors');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
+require('dotenv').config()
 
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
@@ -11,6 +12,7 @@ const ordersRouter = require('./routes/orders');
 const categoriesRouter = require('./routes/categories');
 
 const app = express();
+app.locals.API_KEY = process.env.API_KEY;
 
 const MongoClient = require('mongodb').MongoClient;
 
