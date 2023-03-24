@@ -112,7 +112,3 @@ function hashPassword(password) {
 }
 
 module.exports = router;
-
-
-
-
