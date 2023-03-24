@@ -1,6 +1,7 @@
 const { ObjectId } = require('bson');
 const express = require('express');
 const router = express.Router();
+const crypto = require('crypto-js');
 
 // HÄMTA ALLA USERS // SKICKA INTE MED LÖSENORD // BARA ID, NAMN + EMAIL PÅ ALLA USERS
 router.get('/', function(req, res) {
@@ -38,19 +39,35 @@ router.post('/', function(req, res) {
 // SKAPA USER
 router.post('/add', function(req, res) {
 
-  let answer = {
-   success: false,
+  try {
+    let answer = {
+      success: false,
+     }
+   
+     let newUser = {
+       username: req.body.name,
+       email: req.body.email,
+      }
 
+      newUser.password = hashPassword(req.body.password)
+
+     console.log(newUser.password);
+   
+     const usersCollection = req.app.locals.db.collection('users');
+   
+     usersCollection.insertOne(newUser)
+     .then(result => {
+       answer.success = true;
+       answer.id = result.insertedId;
+       answer.username = newUser.username;
+       res.json(answer);
+     })
+   
   }
-
-  const usersCollection = req.app.locals.db.collection('users');
-
-  usersCollection.insertOne(req.body)
-  .then(result => {
-    answer.success = true;
-    answer.id = result.insertedId;
-    res.json(answer);
-  })
+  catch(err) {
+    console.log(err);
+  }
+  
 })
 
 // LOGGA IN USER
@@ -59,9 +76,10 @@ router.post('/login', function(req, res) {
   const usersCollection = req.app.locals.db.collection('users');
 
   const user = {
-    user: req.body.username,
-    pw: req.body.password
+    user: req.body.username
   }
+
+  user.pw = hashPassword(req.body.password);
 
   let answer = {
     loggedIn: false,
@@ -72,9 +90,8 @@ router.post('/login', function(req, res) {
   usersCollection.find().toArray()
   .then(users => {
     for (let i = 0; i < users.length; i++) {
-      if (user.username === users[i].username && user.pw === users[i].password) {
+      if (user.user === users[i].username && user.pw === users[i].password) {
         answer.loggedIn = true;
-        answer.user = user;
         answer.id = users[i]._id;
       }
     }
@@ -84,4 +101,12 @@ router.post('/login', function(req, res) {
   
 })
 
+function hashPassword(password) {
+  return crypto.SHA3(password).toString();
+}
+
 module.exports = router;
+
+
+
+
