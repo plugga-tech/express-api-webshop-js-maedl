@@ -11,7 +11,26 @@ router.get('/', function(req, res, next) {
 });
 
 router.post('/add', function(req, res) {
-  console.log(req.body);
+  const categoriesCollection = req.app.locals.db.collection('categories');
+
+  console.log(process.env.API_KEY);
+
+  if (req.body.token === process.env.API_KEY) {
+
+    const newCategory = {
+      name: req.body.name
+    }
+  
+    categoriesCollection.insertOne(newCategory)
+    .then(result => {
+      console.log(result)
+      res.json(result);
+    })
+  }
+  else {
+    res.status(401).json({ message: "Not Authorized" });
+  }
+
 })
 
 module.exports = router;
