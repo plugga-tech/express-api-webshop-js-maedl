@@ -45,7 +45,7 @@ router.post('/add', function(req, res) {
      }
    
      let newUser = {
-       username: req.body.name,
+       name: req.body.name,
        email: req.body.email,
       }
 
@@ -59,7 +59,7 @@ router.post('/add', function(req, res) {
      .then(result => {
        answer.success = true;
        answer.id = result.insertedId;
-       answer.username = newUser.username;
+       answer.name = newUser.name;
        res.json(answer);
      })
    
@@ -76,7 +76,7 @@ router.post('/login', function(req, res) {
   const usersCollection = req.app.locals.db.collection('users');
 
   const user = {
-    user: req.body.username
+    email: req.body.email
   }
 
   user.pw = hashPassword(req.body.password);
@@ -90,13 +90,19 @@ router.post('/login', function(req, res) {
   usersCollection.find().toArray()
   .then(users => {
     for (let i = 0; i < users.length; i++) {
-      if (user.user === users[i].username && user.pw === users[i].password) {
+      if (user.email === users[i].email && user.pw === users[i].password) {
         answer.loggedIn = true;
         answer.id = users[i]._id;
       }
     }
 
-    res.json(answer);
+    if (answer.loggedIn) {
+      res.json(answer);
+    }
+    else {
+      res.status(401).json(answer);
+    }
+    
   })
   
 })
