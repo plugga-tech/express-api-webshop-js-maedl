@@ -20,11 +20,11 @@ router.post('/add', function(req, res) {
 
     productsCollection.findOne({_id: id})
     .then(result => {
-     let currentAmount = result.quantity;
+     let currentAmount = result.lager;
      
      let newAmount = currentAmount - orderedAmount;
 
-     productsCollection.updateOne({_id: id}, {$set: {"quantity": newAmount}});
+     productsCollection.updateOne({_id: id}, {$set: {"lager": newAmount}});
     });
 
   });
